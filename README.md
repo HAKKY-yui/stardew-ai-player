@@ -82,7 +82,7 @@
 2. 一个**本地 HTTP 桥 Mod**（提供 `/state` `/surroundings` `/menu`，默认端口 7850）
    → 我们用的是 `JunimoBridge`（作者 mlkgrnt，**未声明开源许可，因此不能随仓库分发**）。
    详见 [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md)。**没有这个桥，本项目跑不起来。**
-3. **Node.js 18+**、**Windows PowerShell 5.1+**
+3. **Node.js 18+**、**PowerShell**（7 优先，没装自动用系统自带的 5.1）
 
 > 如果你拿不到那个桥：本仓库的 `input layer` + `pathmap engine` 仍然可读可学，但要接自己的实现。
 > 桥的接口契约见 [PLAYBOOK §1](docs/PLAYBOOK.md#1-桥的接口契约)。
@@ -95,9 +95,12 @@
 git clone https://github.com/<your-account>/stardew-ai-player.git
 cd stardew-ai-player
 
-# 脚本认这两个环境变量（PowerShell 用 $env:NAME = "..."）
+# 脚本认这几个环境变量（PowerShell 用 $env:NAME = "..."）
 export SDV_BRIDGE=http://localhost:7850
 export STARDEW_SAVES="$APPDATA/StardewValley/Saves"
+
+# 可选：默认用 PowerShell 7（pwsh），没装就自动回退 5.1（powershell）
+# export SDV_POWERSHELL=pwsh        # 或 powershell，强制指定
 
 # 可选：跳过自动找窗口，直接指定句柄
 # export STARDEW_HWND=0x000000000002f048

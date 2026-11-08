@@ -31,6 +31,24 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const API = process.env.SDV_BRIDGE || 'http://localhost:7850';
+
+// Which PowerShell to drive: PowerShell 7 ("pwsh") by default, falling back to
+// Windows PowerShell 5.1 if 7 is not installed. Override with SDV_POWERSHELL.
+const PS_CANDIDATES = [process.env.SDV_POWERSHELL, 'pwsh', 'powershell'].filter(Boolean);
+let _psExe = null;
+function psExe() {
+  if (_psExe) return _psExe;
+  for (const exe of PS_CANDIDATES) {
+    try {
+      execFileSync(exe, ['-NoProfile', '-Command', 'exit 0'], { stdio: 'ignore', windowsHide: true });
+      _psExe = exe;
+      return exe;
+    } catch { /* not installed - try the next one */ }
+  }
+  _psExe = 'powershell';
+  return _psExe;
+}
+
 const SAVES = process.env.STARDEW_SAVES
   || 'C:/Users/<you>/AppData/Roaming/StardewValley/Saves';
 
@@ -484,7 +502,7 @@ async function settle(maxMs = 900) {
 
 // ── walking ────────────────────────────────────────────────────────────────
 function startKeyer() {
-  const proc = spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', join(HERE, 'keyer.ps1')], {
+  const proc = spawn(psExe(), ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', join(HERE, 'keyer.ps1')], {
     stdio: ['pipe', 'pipe', 'inherit'],
     windowsHide: true,
   });
@@ -633,7 +651,7 @@ function argOf(argv, name, dflt) {
  */
 function resolveHwnd(hint) {
   if (hint && hint !== 'auto') return hint;
-  const out = execFileSync('powershell', [
+  const out = execFileSync(psExe(), [
     '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', join(HERE, 'gethwnd.ps1'),
   ], { encoding: 'utf8' }).trim();
   if (!out) throw new Error('no modded Stardew window found');

@@ -4,6 +4,7 @@
     "bridge.baseUrl": "环境变量 SDV_BRIDGE（pathmap.mjs / nav.mjs / walk.mjs 会读）",
     "game.savesDir": "环境变量 STARDEW_SAVES（pathmap.mjs 的路网文件放在这里）",
     "hwnd": "可选环境变量 STARDEW_HWND=0x...；不设则自动跑 gethwnd.ps1",
+    "powershell": "可选环境变量 SDV_POWERSHELL；默认 'pwsh'，没装则回退 'powershell'",
     "window.*": "scripts/host.ps1 顶部的 $winX/$winY/$winW/$winH",
     "input.*": "各脚本内的默认值（holdMs、pollMs、secPerTile）",
     "play.*": "各脚本内的默认值；收工/就寝时间在 docs/PLAYBOOK.md §9 的算式里用"

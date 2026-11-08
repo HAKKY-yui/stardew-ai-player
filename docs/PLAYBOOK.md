@@ -219,6 +219,7 @@ down(方向键) → 每 60 ms 读一次 player.isMoving / x,y → 到位就 up
 | 16 | 存档显示名的两处 | 改了正文标题还显示旧名 | 正文 `<player><name>` + `SaveGameInfo` 都要改（本仓库不提供改存档工具，自己按这两处改，改前先备份） |
 | 17 | PowerShell 传空字符串参数被吞 | `--mods-path ''` 失效 | `-Command "& { & '...' -ModsPath ([string]'') }"` |
 | 18 | 联机里冻时间只冻自己 | 两边时钟错开 | 不做时间暂停/加速 |
+| 19 | PowerShell 版本/执行策略不一致 | 5.1 默认 Restricted，直接跑 `.ps1` 报 `SecurityError`；7 默认 `RemoteSigned` 能跑 | 调用一律带 `-ExecutionPolicy Bypass`；脚本按 `pwsh`→`powershell` 顺序探测（`SDV_POWERSHELL` 可强制） |
 
 ---
 

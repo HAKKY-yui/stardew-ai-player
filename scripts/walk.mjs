@@ -24,14 +24,31 @@
  * data/maps/<Location>.json, merged into whatever was already recorded.
  */
 
-import { execFile } from 'node:child_process';
-import { spawn } from 'node:child_process';
+import { execFile, spawn, execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const API = (process.env.SDV_BRIDGE || 'http://localhost:7850') + '/state';
+
+// Which PowerShell to drive: PowerShell 7 ("pwsh") by default, falling back to
+// Windows PowerShell 5.1 if 7 is not installed. Override with SDV_POWERSHELL.
+const PS_CANDIDATES = [process.env.SDV_POWERSHELL, 'pwsh', 'powershell'].filter(Boolean);
+let _psExe = null;
+function psExe() {
+  if (_psExe) return _psExe;
+  for (const exe of PS_CANDIDATES) {
+    try {
+      execFileSync(exe, ['-NoProfile', '-Command', 'exit 0'], { stdio: 'ignore', windowsHide: true });
+      _psExe = exe;
+      return exe;
+    } catch { /* not installed - try the next one */ }
+  }
+  _psExe = 'powershell';
+  return _psExe;
+}
+
 const MAPDIR = join(HERE, 'data', 'maps');
 
 const DIRS = {
@@ -66,7 +83,7 @@ async function getState() {
 
 /** Start the persistent key poster and return {tap, close}. */
 function startKeyer() {
-  const proc = spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', join(HERE, 'keyer.ps1')], {
+  const proc = spawn(psExe(), ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', join(HERE, 'keyer.ps1')], {
     stdio: ['pipe', 'pipe', 'inherit'],
     windowsHide: true,
   });
