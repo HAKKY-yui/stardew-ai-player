@@ -697,6 +697,10 @@ async function main() {
     const bumpCap = Number(argOf(argv, '--bumps', 40));
     let budget = budget0;
     let bumps = 0;
+    // Per-tile failure counter for "the oracle says walk, the body says no".
+    // Mailboxes, chests, pets and other objects the surroundings scan does not
+    // report all land here; three strikes and we trust the feet, not the API.
+    const walkFails = new Map();
     let clearFails = 0;
     let stopReason = null;
     STATS.learned = 0;
@@ -849,6 +853,26 @@ async function main() {
               // timing problem, not a wall. Count a bump, keep the tile.
               bumps++;
               trace.push({ tile: [bx, by], action: 'walk', ok: false, oracle: live });
+              const wkey = bx + ',' + by;
+              const fails = (walkFails.get(wkey) || 0) + 1;
+              walkFails.set(wkey, fails);
+              if (fails >= 3) {
+                // Three attempts, no movement, and the surroundings scan still
+                // calls it walkable: something invisible to the scan sits there
+                // (mailbox, chest, animal). Believe the body and re-route.
+                setTile(map, bx, by, stamp({
+                  state: 'block',
+                  cost: Infinity,
+                  need: 'walk_blocked',
+                  src: 'event',
+                  at: clockOf(st).hhmm,
+                  ttlDays: 1,
+                }, clockOf(st)));
+                saveMap(map);
+                walkFails.delete(wkey);
+                route = null;
+                trace.push({ tile: [bx, by], action: 'blocked_by_body', need: 'walk_blocked' });
+              }
               if (bumps >= bumpCap) return 'too_many_bumps';
               continue;
             }
