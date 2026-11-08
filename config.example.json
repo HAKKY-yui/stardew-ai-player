@@ -1,0 +1,53 @@
+{
+  "_readme": "这是参数清单，不是脚本自动读取的配置文件。生效方式见下：",
+  "_live": {
+    "bridge.baseUrl": "环境变量 SDV_BRIDGE（pathmap.mjs / nav.mjs / walk.mjs 会读）",
+    "game.savesDir": "环境变量 STARDEW_SAVES（pathmap.mjs 的路网文件放在这里）",
+    "hwnd": "可选环境变量 STARDEW_HWND=0x...；不设则自动跑 gethwnd.ps1",
+    "window.*": "scripts/host.ps1 顶部的 $winX/$winY/$winW/$winH",
+    "input.*": "各脚本内的默认值（holdMs、pollMs、secPerTile）",
+    "play.*": "各脚本内的默认值；收工/就寝时间在 docs/PLAYBOOK.md §9 的算式里用"
+  },
+  "_comment": "其余键是给人和 agent 看的说明，不是自动生效的开关。",
+
+  "bridge": {
+    "baseUrl": "http://localhost:7850",
+    "_why": "必须是 localhost。某些桥把 127.0.0.1 当成非法 Origin 直接返回 400。"
+  },
+
+  "game": {
+    "installDir": "C:/Program Files (x86)/Steam/steamapps/common/Stardew Valley",
+    "savesDir": "%APPDATA%/StardewValley/Saves",
+    "saveFolder": "<你的存档文件夹名>",
+    "_note": "saveFolder 跟农场名走，不跟角色名。可以在 Saves 目录下看。"
+  },
+
+  "window": {
+    "x": 40,
+    "y": 60,
+    "width": 1302,
+    "height": 776,
+    "_note": "host.ps1 按这个位置摆窗口。改完要保证窗口完整可见，否则截图和点击都会偏。"
+  },
+
+  "input": {
+    "holdMsPerTile": 200,
+    "pollMs": 60,
+    "secPerTile": 0.35,
+    "_note": "长按走位：按住方向键，每 pollMs 读一次位置，够了就松。secPerTile 用于估时，不是硬限制。"
+  },
+
+  "perception": {
+    "radius": 30,
+    "_note": "桥的 /surroundings 半径硬上限是 30（61x61 窗口）。传更大不会报错，但只给 30。"
+  },
+
+  "play": {
+    "windDownAt": "22:30",
+    "bedtimeAt": "23:00",
+    "maxSpendPerTrip": 100,
+    "maxSpendPerDay": 300,
+    "minBalance": 50,
+    "_note": "minBalance 是余额底线。这些是默认值，按你自己的存档改。"
+  }
+}

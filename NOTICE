@@ -1,0 +1,18 @@
+Stardew AI Player
+Copyright 2026 <your name>
+
+This product includes software developed at
+CSXizhang/star (https://github.com/CSXizhang/star), licensed under the
+Apache License 2.0. No source code from that project is copied into this
+repository; its documentation was used as a design reference for the
+"daily rhythm", "trip-planning cut-off" and "action receipt" sections of
+docs/PLAYBOOK.md, rewritten for this implementation.
+
+Third-party names referenced but NOT redistributed here:
+  - Stardew Valley (ConcernedApe)          - http://www.stardewvalley.net
+  - SMAPI (Pathoschild)                    - https://smapi.io
+  - JunimoBridge (mlkgrnt)                 - no published license; obtain it yourself
+  - Console Commands, Save Backup (SMAPI)  - install separately
+
+No game assets, no mod binaries, and no save files are included in this
+repository.
